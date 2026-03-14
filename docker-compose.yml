@@ -1,0 +1,106 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: mailguard-postgres
+    environment:
+      POSTGRES_USER: mailguard
+      POSTGRES_PASSWORD: mailguard
+      POSTGRES_DB: mailguard
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mailguard"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: mailguard-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: mailguard-api
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://mailguard:mailguard@postgres:5432/mailguard
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: local-development-jwt-secret-64-chars-minimum-required-for-security
+      ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      NODE_ENV: development
+      PORT: 3000
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_ADMIN_UID: ${TELEGRAM_ADMIN_UID:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./packages/core:/app/packages/core
+      - ./apps/api:/app/apps/api
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    container_name: mailguard-worker
+    environment:
+      DATABASE_URL: postgresql://mailguard:mailguard@postgres:5432/mailguard
+      REDIS_URL: redis://redis:6379
+      ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      NODE_ENV: development
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_ADMIN_UID: ${TELEGRAM_ADMIN_UID:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./packages/core:/app/packages/core
+      - ./apps/worker:/app/apps/worker
+      - ./packages/smtp:/app/packages/smtp
+
+  bot:
+    build:
+      context: .
+      dockerfile: apps/bot/Dockerfile
+    container_name: mailguard-bot
+    environment:
+      DATABASE_URL: postgresql://mailguard:mailguard@postgres:5432/mailguard
+      REDIS_URL: redis://redis:6379
+      ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      NODE_ENV: development
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_ADMIN_UID: ${TELEGRAM_ADMIN_UID:-}
+      INTERNAL_API_URL: http://api:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./packages/core:/app/packages/core
+      - ./apps/bot:/app/apps/bot
+
+volumes:
+  postgres_data:
+  redis_data:

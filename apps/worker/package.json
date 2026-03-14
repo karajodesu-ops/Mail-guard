@@ -1,0 +1,33 @@
+{
+  "name": "@mailguard/worker",
+  "version": "1.0.0",
+  "description": "MailGuard Worker - BullMQ email worker",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "start:dev": "ts-node src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@mailguard/core": "*",
+    "@mailguard/smtp": "*",
+    "bullmq": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3",
+    "ts-node": "^10.9.2"
+  },
+  "keywords": [
+    "mailguard",
+    "worker",
+    "bullmq",
+    "email"
+  ],
+  "license": "MIT"
+}

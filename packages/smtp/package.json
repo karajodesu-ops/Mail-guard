@@ -1,0 +1,36 @@
+{
+  "name": "@mailguard/smtp",
+  "version": "1.0.0",
+  "description": "MailGuard SMTP - Nodemailer wrapper with provider auto-detection",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@mailguard/core": "*",
+    "nodemailer": "^6.9.8"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.14"
+  },
+  "keywords": [
+    "mailguard",
+    "smtp",
+    "email",
+    "nodemailer"
+  ],
+  "license": "MIT"
+}

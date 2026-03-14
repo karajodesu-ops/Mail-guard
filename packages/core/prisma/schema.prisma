@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id                  String      @id @default(uuid())
+  name                String      @db.VarChar(100)
+  slug                String      @unique @db.VarChar(100)
+  senderEmailId       String      @map("sender_email_id")
+  senderEmail         SenderEmail @relation(fields: [senderEmailId], references: [id], onDelete: Restrict)
+  otpLength           Int         @default(6) @map("otp_length") @db.SmallInt
+  otpExpirySeconds    Int         @default(600) @map("otp_expiry_seconds")
+  otpMaxAttempts      Int         @default(5) @map("otp_max_attempts") @db.SmallInt
+  otpSubjectTmpl      String?     @map("otp_subject_tmpl")
+  otpBodyTmpl         String?     @map("otp_body_tmpl")
+  otpFormat           OtpFormat   @default(text) @map("otp_format")
+  rateLimitPerHour    Int         @default(10) @map("rate_limit_per_hour")
+  isActive            Boolean     @default(true) @map("is_active")
+  createdAt           DateTime    @default(now()) @map("created_at")
+  apiKeys             ApiKey[]
+  otpRecords          OtpRecord[]
+  emailLogs           EmailLog[]
+}
+
+model SenderEmail {
+  id              String    @id @default(uuid())
+  emailAddress    String    @unique @map("email_address") @db.VarChar(255)
+  displayName     String?   @map("display_name") @db.VarChar(100)
+  provider        String    @db.VarChar(50)
+  smtpHost        String    @map("smtp_host") @db.VarChar(255)
+  smtpPort        Int       @map("smtp_port") @db.SmallInt
+  appPasswordEnc  String    @map("app_password_enc")
+  dailyLimit      Int       @map("daily_limit")
+  isVerified      Boolean   @default(false) @map("is_verified")
+  isActive        Boolean   @default(true) @map("is_active")
+  lastUsedAt      DateTime? @map("last_used_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  projects        Project[]
+  emailLogs       EmailLog[]
+}
+
+model ApiKey {
+  id          String    @id @default(uuid())
+  projectId   String    @map("project_id")
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  keyHash     String    @unique @map("key_hash") @db.VarChar(255)
+  keyPrefix   String    @map("key_prefix") @db.VarChar(12)
+  label       String?   @db.VarChar(100)
+  isSandbox   Boolean   @default(false) @map("is_sandbox")
+  isActive    Boolean   @default(true) @map("is_active")
+  lastUsedAt  DateTime? @map("last_used_at")
+  expiresAt   DateTime? @map("expires_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+}
+
+model OtpRecord {
+  id              String    @id @default(uuid())
+  projectId       String    @map("project_id")
+  project         Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  recipientEmail  String    @map("recipient_email") @db.VarChar(255)
+  otpHash         String    @map("otp_hash") @db.VarChar(255)
+  purpose         String    @default("verification") @db.VarChar(50)
+  attemptsCount   Int       @default(0) @map("attempts_count") @db.SmallInt
+  isVerified      Boolean   @default(false) @map("is_verified")
+  isInvalidated   Boolean   @default(false) @map("is_invalidated")
+  expiresAt       DateTime  @map("expires_at")
+  verifiedAt      DateTime? @map("verified_at")
+  ipAddress       String?   @map("ip_address") @db.VarChar(45)
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  @@index([recipientEmail, projectId, isVerified, isInvalidated, expiresAt])
+}
+
+model EmailLog {
+  id              String      @id @default(uuid())
+  projectId       String      @map("project_id")
+  project         Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  senderEmailId   String      @map("sender_email_id")
+  senderEmail     SenderEmail @relation(fields: [senderEmailId], references: [id], onDelete: Restrict)
+  type            EmailType
+  recipientEmail  String      @map("recipient_email") @db.VarChar(255)
+  subject         String?     @db.VarChar(500)
+  status          EmailStatus @default(queued)
+  smtpMessageId   String?     @map("smtp_message_id") @db.VarChar(255)
+  errorMessage    String?     @map("error_message")
+  sentAt          DateTime?   @map("sent_at")
+  createdAt       DateTime    @default(now()) @map("created_at")
+}
+
+model BotSession {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+enum OtpFormat { text html }
+enum EmailType { otp transactional template }
+enum EmailStatus { queued sent delivered bounced failed }
