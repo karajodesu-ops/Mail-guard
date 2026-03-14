@@ -1,0 +1,86 @@
+{
+  "name": "@mailguard/core",
+  "version": "1.0.0",
+  "description": "MailGuard Core - Shared utilities, encryption, OTP logic, and Prisma client",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./crypto": {
+      "import": "./dist/crypto.js",
+      "require": "./dist/crypto.js",
+      "types": "./dist/crypto.d.ts"
+    },
+    "./otp": {
+      "import": "./dist/otp.js",
+      "require": "./dist/otp.js",
+      "types": "./dist/otp.d.ts"
+    },
+    "./ratelimit": {
+      "import": "./dist/ratelimit.js",
+      "require": "./dist/ratelimit.js",
+      "types": "./dist/ratelimit.d.ts"
+    },
+    "./env": {
+      "import": "./dist/env.js",
+      "require": "./dist/env.js",
+      "types": "./dist/env.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types/index.js",
+      "require": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./constants": {
+      "import": "./dist/constants.js",
+      "require": "./dist/constants.js",
+      "types": "./dist/constants.d.ts"
+    },
+    "./prisma": {
+      "import": "./dist/prisma.js",
+      "require": "./dist/prisma.js",
+      "types": "./dist/prisma.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "generate": "prisma generate",
+    "migrate": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "studio": "prisma studio",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.8.0",
+    "bcrypt": "^5.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "pino": "^8.17.2",
+    "pino-pretty": "^10.3.1",
+    "redis": "^4.6.12",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/node": "^20.10.0",
+    "prisma": "^5.8.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0",
+    "@vitest/coverage-v8": "^1.2.0"
+  },
+  "keywords": [
+    "mailguard",
+    "otp",
+    "encryption",
+    "prisma"
+  ],
+  "license": "MIT"
+}

@@ -1,0 +1,35 @@
+{
+  "name": "@mailguard/bot",
+  "version": "1.0.0",
+  "description": "MailGuard Bot - Telegram Bot admin interface",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "start:dev": "ts-node src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@mailguard/core": "*",
+    "@mailguard/smtp": "*",
+    "grammy": "^1.21.1",
+    "@grammyjs/conversations": "^1.1.2",
+    "@grammyjs/storage-redis": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3",
+    "ts-node": "^10.9.2"
+  },
+  "keywords": [
+    "mailguard",
+    "bot",
+    "telegram",
+    "grammy"
+  ],
+  "license": "MIT"
+}
