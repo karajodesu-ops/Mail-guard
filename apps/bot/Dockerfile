@@ -39,13 +39,10 @@ COPY --from=builder /app/package.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages/core/dist ./packages/core/dist
 COPY --from=builder /app/packages/core/package.json ./packages/core/
-COPY --from=builder /app/packages/core/node_modules ./packages/core/node_modules
 COPY --from=builder /app/packages/smtp/dist ./packages/smtp/dist
 COPY --from=builder /app/packages/smtp/package.json ./packages/smtp/
-COPY --from=builder /app/packages/smtp/node_modules ./packages/smtp/node_modules
 COPY --from=builder /app/apps/bot/dist ./apps/bot/dist
 COPY --from=builder /app/apps/bot/package.json ./apps/bot/
-COPY --from=builder /app/apps/bot/node_modules ./apps/bot/node_modules
 COPY --from=builder /app/packages/core/prisma ./packages/core/prisma
 
 # Set environment
