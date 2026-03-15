@@ -2,7 +2,7 @@ import * as crypto from 'crypto';
 import { API_KEY_PREFIXES, API_KEY_CACHE_TTL, ERROR_CODES } from './constants';
 import type { GeneratedApiKey, ApiKeyWithProject, ApiKeyValidation } from './types';
 import { getPrismaClient } from './prisma';
-import { getCachedApiKey, setCachedApiKey, invalidateCachedApiKey, getRedisClient } from './redis';
+import { getCachedApiKey, setCachedApiKey, invalidateCachedApiKey } from './redis';
 import { getLogger } from './logger';
 
 const logger = getLogger('core:apikey');
@@ -99,7 +99,7 @@ export async function validateApiKey(apiKey: string): Promise<ApiKeyValidation> 
     prisma.apiKey.update({
       where: { id: keyRecord.id },
       data: { lastUsedAt: new Date() },
-    }).catch((err) => {
+    }).catch((err: unknown) => {
       logger.warn({ err }, 'Failed to update lastUsedAt for API key');
     });
     

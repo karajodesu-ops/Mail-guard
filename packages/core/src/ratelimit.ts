@@ -1,5 +1,3 @@
-import { createClient } from 'redis';
-
 export interface RateLimitConfig {
   key: string;
   limit: number;

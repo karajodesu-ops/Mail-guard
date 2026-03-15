@@ -35,3 +35,5 @@ venv/
 
 # Go
 vendor/
+# TypeScript build info
+**/*.tsbuildinfo

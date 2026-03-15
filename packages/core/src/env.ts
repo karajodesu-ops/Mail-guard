@@ -26,13 +26,13 @@ const envSchema = z.object({
 
   // Application
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.string().transform((val) => {
+  PORT: z.string().optional().default('3000').transform((val) => {
     const parsed = parseInt(val, 10);
     if (isNaN(parsed) || parsed < 1 || parsed > 65535) {
       throw new Error('PORT must be a valid port number (1-65535)');
     }
     return parsed;
-  }).optional().default(3000),
+  }),
 
   // Bot Service Only
   INTERNAL_API_URL: z.string().url('INTERNAL_API_URL must be a valid URL').optional(),
