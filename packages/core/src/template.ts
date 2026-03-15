@@ -119,7 +119,7 @@ export function getAvailablePlaceholders(): Array<{ placeholder: string; descrip
  */
 export function maskEmail(email: string): string {
   const [localPart, domain] = email.split('@');
-  if (!domain || localPart.length === 0) {
+  if (!domain || !localPart || localPart.length === 0) {
     return '***@***.***';
   }
   

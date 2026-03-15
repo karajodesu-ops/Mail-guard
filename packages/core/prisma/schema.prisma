@@ -98,6 +98,21 @@ model BotSession {
   updatedAt DateTime @updatedAt @map("updated_at")
 }
 
-enum OtpFormat { text html }
-enum EmailType { otp transactional template }
-enum EmailStatus { queued sent delivered bounced failed }
+enum OtpFormat {
+  text
+  html
+}
+
+enum EmailType {
+  otp
+  transactional
+  template
+}
+
+enum EmailStatus {
+  queued
+  sent
+  delivered
+  bounced
+  failed
+}
